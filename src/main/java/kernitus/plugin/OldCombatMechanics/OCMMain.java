@@ -279,6 +279,7 @@ public class OCMMain extends JavaPlugin {
 
         ModuleLoader.addModule(new ModuleAttackSounds(this));
         ModuleLoader.addModule(new ModuleSwordSweepParticles(this));
+        ModuleLoader.addModule(new ModuleStrengthMod(this));
     }
 
     private void registerHooks() {

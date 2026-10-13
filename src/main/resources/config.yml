@@ -54,6 +54,7 @@ modesets:
     - "old-armour-strength"
     - "old-potion-effects"
     - "old-critical-hits"
+    - "old-strength-mod"
   new:
     - "old-golden-apples"
 
@@ -557,6 +558,13 @@ old-burn-delay:
   # This makes it so entities will immediately start to burn when entering fire
   # How long, in ticks, entities should be on fire for after not being in direct contact anymore
   fire-ticks: 120
+
+old-strength-mod:
+  enabled: false
+  level-1: 1.3
+  level-2: 1.6
+  level-3: 1.9
+
 
 disable-attack-sounds:
   # Disables attack sounds that were added with 1.9+
