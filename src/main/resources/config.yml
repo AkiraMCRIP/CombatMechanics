@@ -114,8 +114,8 @@ attack-frequency:
 attack-range:
   # Applies 1.8-style hit detection (smaller hitbox margin, shorter creative reach).
   # Paper 1.21.11+ only; auto-disables on older/Paperless servers.
-  # Note: this module re-applies reach when items are held and strips it when swapping/dropping to avoid tainting stored items.
-  # Very frequent hotbar swapping may have a small performance cost.
+  # Note: every weapon in the player's inventory keeps these settings, so hotbar switching does not change the held item.
+  # Weapons entering the inventory (kits, pickups) are updated on the next tick; drops, death drops and quitting remove them.
   min-range: 0.0
   max-range: 3.0
   min-creative-range: 0.0
