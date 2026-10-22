@@ -374,7 +374,11 @@ public class Config {
     }
 
     public static boolean isModuleInAnyModeset(String moduleName) {
-        return modesets.values().stream().anyMatch(set -> set.contains(normaliseModuleName(moduleName)));
+        final String normalised = normaliseModuleName(moduleName);
+        for (Set<String> modeset : modesets.values()) {
+            if (modeset.contains(normalised)) return true;
+        }
+        return false;
     }
 
     public static Map<UUID, Set<String>> getWorlds() {
@@ -382,10 +386,19 @@ public class Config {
     }
 
     private static String normaliseModuleName(String moduleName) {
-        return moduleName == null ? "" : moduleName.toLowerCase(Locale.ROOT);
+        return moduleName == null ? "" : normalise(moduleName);
     }
 
     public static String normaliseModesetName(String modesetName) {
-        return modesetName == null ? "" : modesetName.toLowerCase(Locale.ROOT);
+        return modesetName == null ? "" : normalise(modesetName);
+    }
+
+    private static String normalise(String name) {
+        // Fast path: ASCII without upper-case letters is unchanged by toLowerCase(Locale.ROOT).
+        for (int i = 0; i < name.length(); i++) {
+            final char c = name.charAt(i);
+            if (c > 127 || (c >= 'A' && c <= 'Z')) return name.toLowerCase(Locale.ROOT);
+        }
+        return name;
     }
 }
