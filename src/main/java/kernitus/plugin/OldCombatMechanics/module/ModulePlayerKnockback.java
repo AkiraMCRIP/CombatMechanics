@@ -175,9 +175,10 @@ public class ModulePlayerKnockback extends OCMModule {
         // Calculate bonus knockback for sprinting or knockback enchantment levels
         final EntityEquipment equipment = attacker.getEquipment();
         if (equipment != null) {
-            final ItemStack heldItem = equipment.getItemInMainHand().getType() == Material.AIR
+            final ItemStack mainHandItem = equipment.getItemInMainHand();
+            final ItemStack heldItem = mainHandItem.getType() == Material.AIR
                     ? equipment.getItemInOffHand()
-                    : equipment.getItemInMainHand();
+                    : mainHandItem;
 
             int bonusKnockback;
             if (XEnchantment.KNOCKBACK.getEnchant() == null) {
@@ -193,10 +194,11 @@ public class ModulePlayerKnockback extends OCMModule {
                 playerVelocity.setY(knockbackVerticalLimit);
 
             if (bonusKnockback > 0) { // Apply bonus knockback
-                playerVelocity.add(new Vector((-Math.sin(attacker.getLocation().getYaw() * 3.1415927F / 180.0F) *
-                        (float) bonusKnockback * knockbackExtraHorizontal), knockbackExtraVertical,
-                        Math.cos(attacker.getLocation().getYaw() * 3.1415927F / 180.0F) *
-                                (float) bonusKnockback * knockbackExtraHorizontal));
+                playerVelocity.setX(playerVelocity.getX() + (-Math.sin(attackerLocation.getYaw() * 3.1415927F / 180.0F) *
+                        (float) bonusKnockback * knockbackExtraHorizontal));
+                playerVelocity.setY(playerVelocity.getY() + knockbackExtraVertical);
+                playerVelocity.setZ(playerVelocity.getZ() + (Math.cos(attackerLocation.getYaw() * 3.1415927F / 180.0F) *
+                        (float) bonusKnockback * knockbackExtraHorizontal));
             }
         }
 
@@ -206,7 +208,8 @@ public class ModulePlayerKnockback extends OCMModule {
             final AttributeInstance attribute = knockbackResistanceAttribute == null ? null : victim.getAttribute(knockbackResistanceAttribute);
             if (attribute != null) {
                 final double resistance = 1 - attribute.getValue();
-                playerVelocity.multiply(new Vector(resistance, 1, resistance));
+                playerVelocity.setX(playerVelocity.getX() * resistance);
+                playerVelocity.setZ(playerVelocity.getZ() * resistance);
             }
         }
 
