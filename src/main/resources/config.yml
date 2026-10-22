@@ -107,9 +107,9 @@ disable-attack-cooldown:
 
 attack-frequency:
   # Allows changing the player invulnerability between hits
-  # The hit delay to apply. Default for 1.9+ is 20 ticks (1 second)
-  playerDelay: 18
-  mobDelay: 16
+  # 20 = 1.8 maxHurtResistantTime; hits blocked above half, so effective spacing is 10 ticks
+  playerDelay: 20
+  mobDelay: 20
 
 attack-range:
   # Applies 1.8-style hit detection (smaller hitbox margin, shorter creative reach).
