@@ -83,13 +83,14 @@ public class DamageUtils {
         boolean flag = this.fallDistance > 0.0F && !this.onGround && !this.onClimbable() && !this.isInWater()
         && !this.hasEffect(MobEffectList.BLINDNESS) && this.vehicle == null && entity instanceof EntityLiving;
         */
-        return humanEntity.getFallDistance() > 0.0F &&
+        if (!(humanEntity.getFallDistance() > 0.0F &&
                 !humanEntity.isOnGround() &&
                 !isClimbing.apply(humanEntity) &&
-                !isInWater.apply(humanEntity) &&
-                humanEntity.getActivePotionEffects().stream().map(PotionEffect::getType)
-                        .noneMatch(e -> e == PotionEffectType.BLINDNESS) &&
-                !humanEntity.isInsideVehicle();
+                !isInWater.apply(humanEntity))) return false;
+        for (PotionEffect effect : humanEntity.getActivePotionEffects()) {
+            if (effect.getType() == PotionEffectType.BLINDNESS) return false;
+        }
+        return !humanEntity.isInsideVehicle();
     }
 
     public static boolean isCriticalHit1_9(Player player) {
