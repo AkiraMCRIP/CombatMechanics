@@ -80,6 +80,7 @@ public class EntityDamageByEntityListener extends OCMModule {
     }
 
     private void touchExpiry(LivingEntity damagee) {
+        if (enabled) startExpirySweeperIfNeeded();
         final UUID uuid = damagee.getUniqueId();
         // Some implementations / test setups set maximumNoDamageTicks to 0, but damage immunity bookkeeping can
         // still matter for a short period (e.g. cancelled fire ticks during invulnerability). Keep a small minimum.
@@ -100,6 +101,7 @@ public class EntityDamageByEntityListener extends OCMModule {
             it.remove();
             lastDamages.remove(uuid);
         }
+        if (lastDamageExpiryTicks.isEmpty() && lastDamages.isEmpty()) stopExpirySweeperIfNeeded();
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
