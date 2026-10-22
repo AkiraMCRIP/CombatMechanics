@@ -68,6 +68,11 @@ public class ModuleOldPotionEffects extends OCMModule {
             )));
 
     private Map<PotionKey, PotionDurations> durations;
+    private boolean weaknessMultiplier;
+    private double weaknessModifier;
+    private boolean strengthMultiplier;
+    private boolean strengthAddend;
+    private double strengthModifier;
     private final Set<String> warnedUnknownPotionTypes = new HashSet<>();
     private boolean weaknessAmplifierClamped;
     private boolean potionEffectListenerAttempted;
@@ -87,6 +92,11 @@ public class ModuleOldPotionEffects extends OCMModule {
     @Override
     public void reload() {
         durations = ConfigUtils.loadPotionDurationsList(module());
+        weaknessMultiplier = module().getBoolean("weakness.multiplier");
+        weaknessModifier = module().getDouble("weakness.modifier");
+        strengthMultiplier = module().getBoolean("strength.multiplier");
+        strengthAddend = module().getBoolean("strength.addend");
+        strengthModifier = module().getDouble("strength.modifier");
         weaknessAmplifierClamped = detectWeaknessAmplifierClamp();
         syncWeaknessCompensation();
         updatePotionEffectListener();
@@ -341,8 +351,8 @@ public class ModuleOldPotionEffects extends OCMModule {
         if (!isEnabled(damager, event.getDamagee())) return;
 
         if (event.hasWeakness()) {
-            event.setIsWeaknessModifierMultiplier(module().getBoolean("weakness.multiplier"));
-            final double newWeaknessModifier = module().getDouble("weakness.modifier");
+            event.setIsWeaknessModifierMultiplier(weaknessMultiplier);
+            final double newWeaknessModifier = weaknessModifier;
             event.setWeaknessModifier(newWeaknessModifier);
             event.setWeaknessLevel(1);
             debug("Old weakness modifier: " + event.getWeaknessLevel() +
@@ -352,9 +362,9 @@ public class ModuleOldPotionEffects extends OCMModule {
         final double strengthModifier = event.getStrengthModifier();
 
         if (strengthModifier > 0) {
-            event.setIsStrengthModifierMultiplier(module().getBoolean("strength.multiplier"));
-            event.setIsStrengthModifierAddend(module().getBoolean("strength.addend"));
-            final double newStrengthModifier = module().getDouble("strength.modifier");
+            event.setIsStrengthModifierMultiplier(this.strengthMultiplier);
+            event.setIsStrengthModifierAddend(this.strengthAddend);
+            final double newStrengthModifier = this.strengthModifier;
             event.setStrengthModifier(newStrengthModifier);
             debug("Old strength modifier: " + strengthModifier + " New: " + newStrengthModifier, damager);
         }
