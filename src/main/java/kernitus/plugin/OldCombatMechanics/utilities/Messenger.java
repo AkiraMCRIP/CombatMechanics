@@ -29,6 +29,10 @@ public class Messenger {
         PREFIX = prefix;
     }
 
+    public static boolean isDebugEnabled() {
+        return DEBUG_ENABLED;
+    }
+
     public static void info(String message, Object... args) {
         plugin.getLogger().info(TextUtils.stripColour(String.format(message, args)));
     }

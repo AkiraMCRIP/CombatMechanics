@@ -165,7 +165,7 @@ public abstract class OCMModule implements Listener {
      * @param text the message text
      */
     protected void debug(String text) {
-        Messenger.debug("[" + moduleName + "] " + text);
+        if (Messenger.isDebugEnabled()) Messenger.debug("[" + moduleName + "] " + text);
     }
 
     /**
