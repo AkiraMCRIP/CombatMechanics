@@ -26,8 +26,22 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ModuleChorusFruit extends OCMModule {
 
+    private boolean preventEating;
+    private int hungerValue;
+    private double saturationValue;
+    private double maxTeleportationDistance;
+
     public ModuleChorusFruit(OCMMain plugin) {
         super(plugin, "chorus-fruit");
+        reload();
+    }
+
+    @Override
+    public void reload() {
+        preventEating = module().getBoolean("prevent-eating");
+        hungerValue = module().getInt("hunger-value");
+        saturationValue = module().getDouble("saturation-value");
+        maxTeleportationDistance = module().getDouble("max-teleportation-distance");
     }
 
     @EventHandler
@@ -37,13 +51,13 @@ public class ModuleChorusFruit extends OCMModule {
 
         if (!isEnabled(player)) return;
 
-        if (module().getBoolean("prevent-eating")) {
+        if (preventEating) {
             e.setCancelled(true);
             return;
         }
 
-        final int hungerValue = module().getInt("hunger-value");
-        final double saturationValue = module().getDouble("saturation-value");
+        final int hungerValue = this.hungerValue;
+        final double saturationValue = this.saturationValue;
         final int previousFoodLevel = player.getFoodLevel();
         final float previousSaturation = player.getSaturation();
 
@@ -121,7 +135,7 @@ public class ModuleChorusFruit extends OCMModule {
 
 
     private double getMaxTeleportationDistance() {
-        return module().getDouble("max-teleportation-distance");
+        return maxTeleportationDistance;
     }
 
     private boolean isSafe(Location location) {

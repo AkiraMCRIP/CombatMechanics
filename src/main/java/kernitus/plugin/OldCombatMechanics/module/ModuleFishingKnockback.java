@@ -25,6 +25,8 @@ public class ModuleFishingKnockback extends OCMModule {
     private final SpigotFunctionChooser<PlayerFishEvent, Object, Entity> getHookFunction;
     private final SpigotFunctionChooser<ProjectileHitEvent, Object, Entity> getHitEntityFunction;
     private boolean knockbackNonPlayerEntities;
+    private double damage;
+    private String cancelDraggingIn;
 
     public ModuleFishingKnockback(OCMMain plugin) {
         super(plugin, "old-fishing-knockback");
@@ -40,6 +42,8 @@ public class ModuleFishingKnockback extends OCMModule {
     @Override
     public void reload() {
         knockbackNonPlayerEntities = isSettingEnabled("knockbackNonPlayerEntities");
+        damage = module().getDouble("damage");
+        cancelDraggingIn = module().getString("cancelDraggingIn", "players");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -92,7 +96,7 @@ public class ModuleFishingKnockback extends OCMModule {
         if (livingEntity.getNoDamageTicks() > livingEntity.getMaximumNoDamageTicks() / 2f)
             return;
 
-        double damage = module().getDouble("damage");
+        double damage = this.damage;
         if (damage < 0)
             damage = 0.0001;
 
@@ -150,7 +154,6 @@ public class ModuleFishingKnockback extends OCMModule {
         if (!isEnabled(e.getPlayer()))
             return;
 
-        final String cancelDraggingIn = module().getString("cancelDraggingIn", "players");
         final boolean isPlayer = e.getCaught() instanceof HumanEntity;
         if ((cancelDraggingIn.equals("players") && isPlayer) ||
                 cancelDraggingIn.equals("mobs") && !isPlayer ||
