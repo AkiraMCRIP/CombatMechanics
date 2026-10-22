@@ -41,6 +41,10 @@ public class ModuleSwordBlocking extends OCMModule {
     private BukkitTask legacyTask;
     private long tickCounter;
     private int restoreDelay;
+    private boolean usePermission;
+    private boolean paperAnimation = true;
+    private int shieldDamageReductionAmount = 1;
+    private int shieldDamageReductionPercentage = 50;
     private boolean paperSupported;
     private Object paperAdapter;
     private java.lang.reflect.Method paperApply;
@@ -93,6 +97,10 @@ public class ModuleSwordBlocking extends OCMModule {
     @Override
     public void reload() {
         restoreDelay = module().getInt("restoreDelay", 40);
+        usePermission = module().getBoolean("use-permission");
+        paperAnimation = module().getBoolean("paper-animation", true);
+        shieldDamageReductionAmount = plugin.getConfig().getInt("shield-damage-reduction.generalDamageReductionAmount", 1);
+        shieldDamageReductionPercentage = plugin.getConfig().getInt("shield-damage-reduction.generalDamageReductionPercentage", 50);
         handledEntityInteractions.clear();
         nextEntityInteractionPruneAtNanos = 0L;
         if (!paperSupported || paperAdapter == null) return;
@@ -356,7 +364,7 @@ public class ModuleSwordBlocking extends OCMModule {
 
         if (!isHoldingSword(mainHandItem.getType())) return;
 
-        if (module().getBoolean("use-permission") &&
+        if (usePermission &&
                 !player.hasPermission("oldcombatmechanics.swordblock")) return;
 
         if (supportsPaperAnimation(player)) {
@@ -713,8 +721,8 @@ public class ModuleSwordBlocking extends OCMModule {
         if (!isHoldingSword(player.getInventory().getItemInMainHand().getType())) return 0;
         if (!isPaperSwordBlocking(player)) return 0;
 
-        final int amount = plugin.getConfig().getInt("shield-damage-reduction.generalDamageReductionAmount", 1);
-        final int percent = plugin.getConfig().getInt("shield-damage-reduction.generalDamageReductionPercentage", 50);
+        final int amount = shieldDamageReductionAmount;
+        final int percent = shieldDamageReductionPercentage;
         double reduction = (incomingDamage - amount) * (percent / 100.0);
         if (reduction < 0) reduction = 0;
         if (reduction > incomingDamage) reduction = incomingDamage;
@@ -902,7 +910,7 @@ public class ModuleSwordBlocking extends OCMModule {
     }
 
     private boolean isPaperAnimationEnabled() {
-        return module().getBoolean("paper-animation", true);
+        return paperAnimation;
     }
 
     private void sweepConsumableState(Player player, boolean includeStorage) {
